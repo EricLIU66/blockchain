@@ -13,28 +13,13 @@ require("@nomiclabs/hardhat-ganache");
 // go to Account Details > Export Private Key
 // Be aware of NEVER putting real Ether into testing accounts
 // const ROPSTEN_PRIVATE_KEY = "YOUR ROPSTEN PRIVATE KEY";
-task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
-  const accounts = await hre.ethers.getSigners();
-
-  for (const account of accounts) {
-    console.log(account.address);
-  }
-});
 
 module.exports = {
-  solidity: {
-    version: "0.8.3",
-    settings: {
-      optimizer: {
-        enabled: true,
-        runs: 1000
-      }
-    }
-  },
-  networks: {
-    etherdata: {
-      url: `https://rpc.debugchain.net/`,
-      accounts: ["e48d491f3836013b8ae0bd755f96c4fa5a9833f8194fcef681651a33ddda2149"],
-    }
-  }
+  solidity: "0.8.3",
+  // networks: {
+  //   ropsten: {
+  //     url: `https://eth-ropsten.alchemyapi.io/v2/${ALCHEMY_API_KEY}`,
+  //     accounts: [`0x${ROPSTEN_PRIVATE_KEY}`]
+  //   }
+  // }
 };
