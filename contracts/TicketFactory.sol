@@ -1,5 +1,4 @@
 pragma solidity ^0.8.0;
-
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./TicketNFT.sol";
 import "./TicketMarket.sol";
@@ -8,7 +7,6 @@ import "@openzeppelin/contracts/utils/Context.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
-
 contract TicketsFactory is Ownable {
     struct Festival {
         string festName;
@@ -17,13 +15,10 @@ contract TicketsFactory is Ownable {
         uint256 totalSupply;
         address marketplace;
     }
-
     address[] private activeFests;
     mapping(address => Festival) private activeFestsMapping;
 
     event Created(address ntfAddress, address marketplaceAddress);
-
-    // Creates new NFT and a marketplace for its purchase
     function createNewFest(
         GogoToken token,
         string memory festName,
@@ -53,18 +48,12 @@ contract TicketsFactory is Ownable {
             totalSupply: totalSupply,
             marketplace: address(newMarketplace)
         });
-
         emit Created(newFestAddress, address(newMarketplace));
-
         return newFestAddress;
     }
-
-    // Get all active fests
     function getActiveFests() public view returns (address[] memory) {
         return activeFests;
     }
-
-    // Get fest's details
     function getFestDetails(address festAddress)
         public
         view
