@@ -60,7 +60,7 @@ describe("TicketsFactory contract", function () {
         // await myNFT2.connect(organizer).bulkMintTickets(100, myMarket2.address)
 
         // 注册时发钱
-        await hardhatToken.transfer(customer1.address, 150);
+        await hardhatToken.transfer(customer1.address, 250);
         await hardhatToken.transfer(customer2.address, 200);
         await hardhatToken.transfer(customer3.address, 250);
         await factory.connect(organizer1).createNewFest(hardhatToken.address, "Jay Chow Concert", "Jay", 100, 20)
@@ -111,7 +111,7 @@ describe("TicketsFactory contract", function () {
 
             // token的实例去使用函数
             const customer1Balance = await hardhatToken.balanceOf(customer1.address);
-            expect(customer1Balance).to.equal(150);
+            expect(customer1Balance).to.equal(250);
 
             const customer2Balance = await hardhatToken.balanceOf(customer2.address);
             expect(customer2Balance).to.equal(200);
@@ -146,7 +146,7 @@ describe("TicketsFactory contract", function () {
             // 买票
             const jayDetails = await factory.getFestDetails(jayNFT.address)
             const [jayTicketName, jayTicketSymbol, jayTicketPrice, jayTotalSupply, jayMarketPlace] = Object.values(jayDetails);
-            await jayNFT.connect(organizer1).bulkMintTickets(20, jayMarketPlace);
+            await jayNFT.connect(organizer1).bulkMintTickets(10, jayMarketPlace);
             await hardhatToken.connect(customer1).increaseAllowance(jayMarketPlace, jayTicketPrice);
             let TicketMarket_ct = require('../artifacts/contracts/TicketMarket.sol/TicketMarket.json');
             let TicketMarket_abi = TicketMarket_ct.abi;
@@ -155,7 +155,11 @@ describe("TicketsFactory contract", function () {
 
             const [isExist] = Object.values(await jayNFT.functions.isCustomerExist(customer1.address))
             const [TicketsIds]= Object.values(await jayNFT.functions.getTicketsOfCustomer(customer1.address))
-            console.log(TicketsIds[0])
+            console.log("Purchase")
+            for(let i = 0;i < TicketsIds.length; i++){
+                console.log(TicketsIds[i])
+            }
+            // console.log(TicketsIds[0])
             // if (isExist) {
             //     const [TicketsIds]= Object.values(await jayNFT.functions.getTicketsOfCustomer(customer1.address))
             //     for(let i = 0;i < TicketsIds.length; i++){
@@ -168,14 +172,38 @@ describe("TicketsFactory contract", function () {
             // if (ticketsForSale0.length.equal.to(0)){
             //     console.log("empty")
             // }
-            await jayNFT.connect(customer1).setSaleDetails(TicketsIds[0], 120, jayMarketPlace);
-            const ticketsForSale = await jayNFT.getTicketsForSale();
-            for(let i = 0;i < ticketsForSale.length; i++){
-                console.log(ticketsForSale[i])
-                let val = Object.values(await jayNFT.getTicketDetails(ticketsForSale[i]))
-                console.log(val[4])
+            // await jayNFT.connect(customer1).setSaleDetails(TicketsIds[0], 120, jayMarketPlace);
+            // const ticketsForSale = await jayNFT.getTicketsForSale();
+            // for(let i = 0;i < ticketsForSale.length; i++){
+            //     console.log(ticketsForSale[i])
+            //     let val = Object.values(await jayNFT.getTicketDetails(ticketsForSale[i]))
+            //     console.log(val[4])
+            // }
 
+            // 抽奖
+            await jayNFT.connect(organizer1).bulkLotteryTickets(10, jayMarketPlace);
+            console.log("Ticket Left")
+            console.log(await jayNFT.getBulkLeft())
+            console.log(await jayNFT.getLottLeft())
+            console.log("Lottery")
+            await hardhatToken.connect(customer1).increaseAllowance(jayMarketPlace, jayTicketPrice);
+            await TicketsMartket.connect(customer1).enter()
+            await hardhatToken.connect(customer2).increaseAllowance(jayMarketPlace, jayTicketPrice);
+            await TicketsMartket.connect(customer2).enter()
+            await TicketsMartket.connect(organizer1).lotteryTicket()
+            const [TicketsIds2]= Object.values(await jayNFT.functions.getTicketsOfCustomer(customer1.address))
+            console.log("customer1")
+            for(let i = 0;i < TicketsIds2.length; i++){
+                console.log(TicketsIds2[i])
             }
+            console.log("customer2")
+            const [TicketsIds3]= Object.values(await jayNFT.functions.getTicketsOfCustomer(customer2.address))
+            for(let i = 0;i < TicketsIds3.length; i++){
+                console.log(TicketsIds3[i])
+            }
+            console.log("Ticket Left")
+            console.log(await jayNFT.getBulkLeft())
+            console.log(await jayNFT.getLottLeft())
 
             // 我的票
 

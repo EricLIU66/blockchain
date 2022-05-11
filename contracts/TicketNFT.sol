@@ -185,7 +185,7 @@ contract TicketNFT is Context, AccessControl, ERC721 {
     function transferLotteryTicket(address buyer) public {
         uint256 lottTicketIndex = _lottTicketIndex.current();
         uint256 lottTicketId = ticketsForLott[lottTicketIndex];
-        _saleTicketIndex.increment();
+        _lottTicketIndex.increment();
 
         require(
             // buyer != ownerOf(saleTicketId),
@@ -364,7 +364,21 @@ contract TicketNFT is Context, AccessControl, ERC721 {
             _ticketDetails[ticketId].status
         );
     }
+    function getBulkLeft()
+        public
+        view
+        returns (uint256)
+    {
+        return ticketsForBulk.length - _saleTicketIndex.current();
+    }
 
+    function getLottLeft()
+        public
+        view
+        returns (uint256)
+    {
+        return ticketsForLott.length - _lottTicketIndex.current();
+    }
     // Get all tickets owned by a customer
     function getTicketsOfCustomer(address customer)
         public
@@ -427,7 +441,6 @@ contract TicketNFT is Context, AccessControl, ERC721 {
             }
         }
     }
-
 }
 
 

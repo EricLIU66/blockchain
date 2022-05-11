@@ -51,10 +51,22 @@ contract TicketMarket {
 
     // Fans who has less than 2 ticket can try lottery
     function lotteryTicket() public{
+        require(
+            msg.sender == _organiser,
+            "Only Organizer Lottery"
+        );
         uint winnerNo = _festival.getLotteryNo();
+        uint playerNo = players.length;
+
+        if (winnerNo > playerNo) {
+            winnerNo = playerNo;
+        }
+
         for (uint256 i = 0; i < winnerNo; i++) {
             uint index = random() % players.length;
-            address winner = players[0];
+            address winner = players[index];
+            players[index] = players[players.length - 1];
+            players.pop();
             uint256 remain = _festival.getTicketPrice() * 90 / 100;
             _token.transferFrom(winner, address(this), remain);
             _token.transfer(_organiser, remain);
@@ -68,7 +80,7 @@ contract TicketMarket {
     }
 
     // Fans pay the enter fee first
-    function enter(TicketNFT oldfestival) public{
+    function fansOnlyEnter(TicketNFT oldfestival) public{
         address player = msg.sender;
 
         require(
@@ -80,6 +92,19 @@ contract TicketMarket {
             oldfestival.isCustomerExist(player),
             "Player must hold tickets before"
         );
+
+        require(
+            _festival.getTicketsOfCustomer(player).length < 2,
+            "Player must hold less than 2 tickets"
+        );
+        uint256 commision = _festival.getTicketPrice() * 10 / 100;
+        _token.transferFrom(player, address(this), commision);
+        _token.transfer(_organiser, commision);
+        players.push(player);
+    }
+
+    function enter() public{
+        address player = msg.sender;
 
         require(
             _festival.getTicketsOfCustomer(player).length < 2,
