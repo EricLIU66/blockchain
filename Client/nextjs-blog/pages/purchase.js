@@ -5,6 +5,7 @@ import Head from 'next/head'
 import styles from '../styles/layout.module.css'
 import Link from "next/link";
 import React, { useState,useEffect , Component} from "react";
+import { withRouter} from 'next/router'
 // import renderNotification from '../utils/notification-handler';
 import {TicketsInfo} from "../components/ticketsInfo"
 import TicketNFT_ct from "../../../artifacts/contracts/TicketNFT.sol/TicketNFT.json";
@@ -54,9 +55,9 @@ let TicketFactory = new ethers.Contract(factory_address , TicketFactory_abi, wal
 
 
 class Purchase extends Component {
-    constructor() {
+    constructor({router}) {
         super();
-
+        // console.log(router.query.PK)
         this.state = {
             festivals: [],
         };
@@ -225,4 +226,4 @@ class Purchase extends Component {
         )
     }
 }
-export default Purchase;
+export default withRouter(Purchase)

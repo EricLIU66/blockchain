@@ -2,7 +2,8 @@ import Link from 'next/link'
 import styles from "../styles/layout.module.css";
 import React, { useState,useEffect } from "react";
 import Router from 'next/router'
-function Home() {
+import { withRouter} from 'next/router'
+function Home({router}) {
 
     const ethers = require('ethers');
     const config = require('../config.json');
