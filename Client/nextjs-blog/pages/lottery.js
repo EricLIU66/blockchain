@@ -51,13 +51,15 @@ class Purchase extends Component {
 
                                 let TicketMarket_ct = require('../../../artifacts/contracts/TicketMarket.sol/TicketMarket.json');
                                 let TicketMarket_abi = TicketMarket_ct.abi;
-                                let TicketsMartket = new ethers.Contract( MarketPlace, TicketMarket_abi);
+                                let TicketsMartket = new ethers.Contract( MarketPlace, TicketMarket_abi, wallet);
                                 // await TicketsMartket.connect(wallet2).functions.purchaseTicket();
-
+                                let [organiser] = Object.values(await TicketNFT.functions.getOrganiser())
+                                // let [organiser_2] = Object.values(await TicketNFT.functions.getOrganiser())
+                                console.log(organiser)
                                 await TicketsMartket.connect(wallet).functions.lotteryTicket()
                                 const players = await TicketsMartket.connect(wallet).functions.getPlayers()
                                 console.log(players)
-                                // Router.reload(window.location.pathname)
+                                Router.reload(window.location.pathname)
 
                             }
 
@@ -74,7 +76,7 @@ class Purchase extends Component {
 
                             let [organiser] = Object.values(await TicketNFT.functions.getOrganiser())
                             let ticketsForLott = await TicketNFT.functions.getTicketsForLott()
-                            let lottNumber = ticketsForLott[0].length
+                            let lottNumber = await TicketNFT.functions.getLottLeft()
                             if(organiser == wallet.address && lottNumber != 0){
                                 let tmp = (
                                     <tr>
@@ -82,7 +84,7 @@ class Purchase extends Component {
                                         <td class="center">{TicketName}</td>
 
                                         <td class="center">{TicketSymbol}</td>
-                                        <td class="center">{lottNumber}</td>
+                                        <td class="center">{lottNumber.toString()}</td>
                                         {/*<td class="center"><button type="submit" className="custom-btn login-btn" >Buy</button></td>*/}
                                         <td><button type="button"  TicketName = {TicketName} TicketSymbol = {TicketSymbol} lottNumber = {lottNumber} className="btn btn-primary" onClick={handleClick}>Submit</button></td>
                                     </tr>

@@ -53,12 +53,12 @@ class Purchase extends Component {
                                     console.log(ticketId)
                                     console.log(newPrice)
                                     await TicketNFT.functions.setSaleDetails(Number(ticketId), Number(newPrice), TicketsMartket.address);
-                                    // let val = Object.values(await TicketNFT.functions.getTicketDetails(TicketsId))
-                                    // console.log(val[1])
-                                    // console.log(val[4])
+                                    let val = Object.values(await TicketNFT.functions.getTicketDetails(TicketsId))
+                                    console.log(val[1])
+                                    console.log(val[4])
                                 }
                                 catch (exception){
-                                    console.log("error")
+                                    console.log("can not be re-sell")
                                 }
                                 finally {
                                     // Router.reload(window.location.pathname)

@@ -82,7 +82,10 @@ contract TicketMarket {
     // Fans pay the enter fee first
     function fansOnlyEnter(TicketNFT oldfestival) public{
         address player = msg.sender;
-
+        require(
+            isPlayerExist(player),
+            "Only first time join"
+        );
         require(
             oldfestival.getOrganiser() == _festival.getOrganiser(), 
             "Player must have participate in activities before"
@@ -110,10 +113,12 @@ contract TicketMarket {
             _festival.getTicketsOfCustomer(player).length < 2,
             "Player must hold less than 2 tickets"
         );
-        uint256 commision = _festival.getTicketPrice() * 10 / 100;
-        _token.transferFrom(player, address(this), commision);
-        _token.transfer(_organiser, commision);
-        players.push(player);
+        if (!isPlayerExist(player)){
+            uint256 commision = _festival.getTicketPrice() * 10 / 100;
+            _token.transferFrom(player, address(this), commision);
+            _token.transfer(_organiser, commision);
+            players.push(player);
+        }
     }
 
     function random() private view returns(uint){
@@ -123,5 +128,14 @@ contract TicketMarket {
     // Get selling price for the ticket
     function getPlayers() public view returns (address[] memory) {
         return players;
+    }
+
+    function isPlayerExist(address player) public view returns (bool) {
+        for (uint256 i = 0; i < players.length; i++) {
+            if (players[i] == player) {
+                return true;
+            }
+        }
+        return false;
     }
 }

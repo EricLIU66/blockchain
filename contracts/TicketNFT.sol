@@ -130,7 +130,7 @@ contract TicketNFT is Context, AccessControl, ERC721 {
             sellingPrice: 0,
             forSale: false,
             canTransfer: false,
-            status: "Waiting For Lottery"
+            status: "Lottery Ticket Cannot Resell"
         });
 
         return newTicketId;
