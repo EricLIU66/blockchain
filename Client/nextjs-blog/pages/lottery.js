@@ -45,12 +45,19 @@ class Purchase extends Component {
 
                             async function handleClick(e){
                                 e.preventDefault()
-                                let TicketName = e.target.getAttribute('TicketName')
-                                let TicketSymbol = e.target.getAttribute('TicketSymbol')
-                                let lottNumber = e.target.getAttribute('lottNumber')
-                                await TicketsMartket.lotteryTicket()
-                                const players = await TicketsMartket.getPlayers()
-                                Router.reload(window.location.pathname)
+                                // let TicketName = e.target.getAttribute('TicketName')
+                                // let TicketSymbol = e.target.getAttribute('TicketSymbol')
+                                // let lottNumber = e.target.getAttribute('lottNumber')
+
+                                let TicketMarket_ct = require('../../../artifacts/contracts/TicketMarket.sol/TicketMarket.json');
+                                let TicketMarket_abi = TicketMarket_ct.abi;
+                                let TicketsMartket = new ethers.Contract( MarketPlace, TicketMarket_abi);
+                                // await TicketsMartket.connect(wallet2).functions.purchaseTicket();
+
+                                await TicketsMartket.connect(wallet).functions.lotteryTicket()
+                                const players = await TicketsMartket.connect(wallet).functions.getPlayers()
+                                console.log(players)
+                                // Router.reload(window.location.pathname)
 
                             }
 
@@ -68,7 +75,7 @@ class Purchase extends Component {
                             let [organiser] = Object.values(await TicketNFT.functions.getOrganiser())
                             let ticketsForLott = await TicketNFT.functions.getTicketsForLott()
                             let lottNumber = ticketsForLott[0].length
-                            if(organiser == wallet.address){
+                            if(organiser == wallet.address && lottNumber != 0){
                                 let tmp = (
                                     <tr>
 

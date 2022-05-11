@@ -32,6 +32,7 @@ class Release extends Component {
         this.state = {
             festivals: [],
             number: [],
+            type: 'Bulk'
         };
     }
     async componentDidMount() {
@@ -65,7 +66,12 @@ class Release extends Component {
                                     let TicketNFT_abi = TicketNFT_ct.abi;
                                     let TicketNFT = new ethers.Contract(myNFT , TicketNFT_abi , wallet );
                                     // await TicketNFT.functions.bulkLotteryTickets(number, myMarket); // make change
-                                    await TicketNFT.functions.bulkMintTickets(number, myMarket); // xian dao xian de
+                                    let type = this.state['type']
+                                    if(type == 'Bulk')
+                                        await TicketNFT.functions.bulkMintTickets(number, myMarket); // xian dao xian de
+                                    else{
+                                        await TicketNFT.functions.bulkLotteryTickets(number, myMarket); // xian dao xian de
+                                    }
                                     Router.reload(window.location.pathname)
                                 }
                                 catch (exception){
@@ -78,22 +84,42 @@ class Release extends Component {
                                 this.setState(state);
                                 console.log(this.state)
                             }
-                            let tmp = (
+                            const handleChange = async (e)=>{
+                                const state = this.state;
+                                state['type'] = e.target.value
+                                this.setState(state);
+                                console.log(this.state)
+                            }
+                            if(_organiser == wallet.address){
+                                let tmp = (
 
-                                <tr key={ticket}>
+                                    <tr key={ticket}>
                                         <th scope="row" id = "organiser">{_organiser}</th>
                                         <td>{TicketName}</td>
                                         <td>{TicketSymbol}</td>
                                         <td>{left}</td>
-                                            <td>
-                                                <input type="text"  id="number" name = "number" onChange={handleInput}
-                                                ></input><br/><br/>
+                                        <td>
+                                            <input type="text"  id="number" name = "number" onChange={handleInput}
+                                            ></input><br/><br/>
+                                        </td>
+                                        <td>
+                                            <div>
+                                                <select  onChange={handleChange}>
+                                                    {/*<option value="">Please Select</option>*/}
+                                                    <option value="Bulk">Bulk</option>
+                                                    <option value="Lottery">Lottery</option>
+                                                </select>
+                                            </div>
+
                                         </td>
                                         <td><button type="submit" myNFT = {ticket} myMarket = {marketplace} organiser = {_organiser} number = {num}  className="btn btn-primary" onClick={handleClick.bind(this,ticket, marketplace, _organiser)}>Submit</button></td>
 
-                                </tr>
-                            )
-                            return tmp
+                                    </tr>
+                                )
+                                return tmp
+                            }
+
+
                         }
 
                     ))
@@ -144,8 +170,8 @@ class Release extends Component {
                         <th scope="col">Name</th>
                         <th scope="col">Symbol</th>
                         <th scope="col">Tickets Left</th>
-                        {/*<th scope="col">Release Type</th>*/}
                         <th scope="col">Number</th>
+                        <th scope="col">Release Type</th>
                         <th scope="col">Release</th>
                     </tr>
                     </thead>
