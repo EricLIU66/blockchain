@@ -7,7 +7,7 @@ import Router from "next/router";
 
 const ethers = require('ethers');
 const config = require('../config.json');
-let privateKey = config['private_key']
+let privateKey3 = config['private_key3']
 let network = config['network']
 let address = config['address']
 
@@ -15,11 +15,17 @@ let token_address = config['token_address']
 let factory_address = config['factory_address']
 
 let provider = ethers.getDefaultProvider(network);
-let wallet = new ethers.Wallet(privateKey , provider);
+let wallet = new ethers.Wallet(privateKey3 , provider);
 
 let token_ct = require('../../../artifacts/contracts/GogoToken.sol/GogoToken.json');
 let token_abi = token_ct.abi;
 let token = new ethers.Contract( token_address , token_abi , wallet );
+
+let balancePromise = token.balanceOf(wallet.address);
+
+balancePromise.then((balance) => {
+    console.log(ethers.utils.formatEther(balance));
+});
 
 let TicketFactory_ct = require('../../../artifacts/contracts/TicketFactory.sol/TicketsFactory.json');
 let TicketFactory_abi = TicketFactory_ct.abi;
@@ -59,8 +65,8 @@ class Purchase extends Component {
                                 let TicketMarket_ct = require('../../../artifacts/contracts/TicketMarket.sol/TicketMarket.json');
                                 let TicketMarket_abi = TicketMarket_ct.abi;
                                 let TicketsMartket = new ethers.Contract( MarketPlace, TicketMarket_abi , wallet );
-                                await token.connect(wallet.address).increaseAllowance(TicketsMartket.address, Price);
-                                await TicketsMartket.connect(wallet.address).secondaryPurchase(TicketID);
+                                await token.connect(wallet).increaseAllowance(TicketsMartket.address, Price);
+                                await TicketsMartket.connect(wallet).secondaryPurchase(TicketID);
                                 Router.reload(window.location.pathname)
                             }
                             const TicketDetails = await TicketFactory.functions.getFestDetails(ticket)
@@ -74,28 +80,34 @@ class Purchase extends Component {
                             //     bool forSale,
                             //     bool canTransfer,
                             //     string memory status
-                            const ticketDetails = await TicketNFT.functions.getTicketDetails(ticket);
-                            const newTicketPrice = ticketDetails
-                            console.log(ticketsForSale)
-                            let res = []
-                            for(let i = 0; i < ticketsForSale[0].length; i++){
-                                // console.log(ticketsForSale)
-                                let tmp = (
-                                    <tr>
-                                        <td class="center">{MarketPlace}</td>
-                                        <td class="center">{TicketName}</td>
-                                        <td class="center">{TicketSymbol}</td>
-                                        <td class="center">{ticketsForSale[0][i]}</td>
-                                        <td class="center">{newTicketPrice.toString()}</td>
-                                        {/*<td class="center"><button type="submit" className="custom-btn login-btn" >Buy</button></td>*/}
-                                        <td><button type="button" Marketplace = {MarketPlace} TicketName = {TicketName} TicketSymbol = {TicketSymbol} TicketID = {ticketsForSale[0][i]} Price = {newTicketPrice.toString()} className="btn btn-primary" onClick={handleClick}>Submit</button></td>
-                                    </tr>
-                                )
-                                res.push(tmp)
+
+                           
+                            
+                            // console.log(ticketsForSale)
+                            // console.log(ticketsForSale.length)
+                            if(ticketsForSale[0].length != 0){
+                                let res = []
+                                for(let i = 0; i < ticketsForSale[0].length; i++){
+                                    let TicketsId = ticketsForSale[0][i]
+                                    console.log(TicketsId)
+                                    let val = Object.values(await TicketNFT.functions.getTicketDetails(TicketsId))
+                                    let newTicketPrice = val[1]
+                                    console.log(val[1])
+                                    console.log(ticketsForSale[i])
+                                    let tmp = (
+                                        <tr>
+                                            <td class="center">{MarketPlace}</td>
+                                            <td class="center">{TicketName}</td>
+                                            <td class="center">{TicketSymbol.toString()}</td>
+                                            <td class="center">{ticketsForSale[i].toString()}</td>
+                                            <td class="center">{newTicketPrice.toString()}</td>
+                                            <td><button type="button" Marketplace = {MarketPlace} TicketName = {TicketName} TicketSymbol = {TicketSymbol} TicketID = {ticketsForSale[i]} Price = {newTicketPrice.toString()} className="btn btn-primary" onClick={handleClick}>Submit</button></td>
+                                        </tr>
+                                    )
+                                    res.push(tmp)
+                                }
+                                return res
                             }
-
-
-                            return res
                         }
 
                     ))

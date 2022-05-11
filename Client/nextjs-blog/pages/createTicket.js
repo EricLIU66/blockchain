@@ -7,6 +7,7 @@ function Home() {
     const ethers = require('ethers');
     const config = require('../config.json');
     let privateKey = config['private_key']
+    // let privateKey1 = config['private_key2'] // make change
     let network = config['network']
     let address = config['address']
 
@@ -18,12 +19,18 @@ function Home() {
 
     let provider = ethers.getDefaultProvider(network);
     let wallet = new ethers.Wallet(privateKey , provider);
+    // let wallet1 = new ethers.Wallet(privateKey1 , provider); // make change
 
     let token_ct = require('../../../artifacts/contracts/GogoToken.sol/GogoToken.json');
     let token_abi = token_ct.abi;
     let token = new ethers.Contract( token_address , token_abi , wallet );
-    // let tmp = token.functions.transfer(wallet.address, 1000)
+    // let tmp = token.functions.transfer(wallet1.address, 1000) //make change
 
+    let balancePromise = token.balanceOf(wallet.address);
+
+    balancePromise.then((balance) => {
+        console.log(ethers.utils.formatEther(balance));
+    });
     // console.log(wallet.getBalance().toString())
     // let ticketsForSale  = TicketsMartket.functions.getPlayers()
     let TicketFactory_ct = require('../../../artifacts/contracts/TicketFactory.sol/TicketsFactory.json');

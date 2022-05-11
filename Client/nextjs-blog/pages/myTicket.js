@@ -4,7 +4,7 @@ import React, { useState,useEffect , Component} from "react";
 import Router from "next/router";
 const ethers = require('ethers');
 const config = require('../config.json');
-let privateKey = config['private_key']
+let privateKey = config['private_key2']
 let network = config['network']
 let address = config['address']
 
@@ -28,7 +28,8 @@ class Purchase extends Component {
 
         this.state = {
             festivals: [],
-            newPrice:[]
+            newPrice:[],
+            
         };
     }
     //
@@ -43,15 +44,24 @@ class Purchase extends Component {
                 .map(async test => {
                     return await Promise.all(test.map(
                         async ticket => {
-                            const handleClick = async (myNFT, myMarket, organiser)=>{
+                            const handleClick = async (ticketId)=>{
                                 try {
-                                    await TicketNFT.connect(wallet.address).functions.setSaleDetails(TicketsId, newPrice, TicketsMartket.address);
+                                    let newPrice = this.state['newPrice']
+                                    console.log(TicketNFT.address)
+                                    console.log(typeof ticketId)
+                                    console.log(typeof newPrice)
+                                    console.log(ticketId)
+                                    console.log(newPrice)
+                                    await TicketNFT.functions.setSaleDetails(Number(ticketId), Number(newPrice), TicketsMartket.address);
+                                    // let val = Object.values(await TicketNFT.functions.getTicketDetails(TicketsId))
+                                    // console.log(val[1])
+                                    // console.log(val[4])
                                 }
                                 catch (exception){
                                     console.log("error")
                                 }
                                 finally {
-                                    Router.reload(window.location.pathname)
+                                    // Router.reload(window.location.pathname)
                                 }
                             }
                             const handleInput = async (e)=>{
@@ -72,23 +82,50 @@ class Purchase extends Component {
                             let TicketsMartket = new ethers.Contract( MarketPlace, TicketMarket_abi , wallet );
                             if(isExist){
                                 // 顾客持有的票，返回的是一个list，用[]访问
-                                const TicketsId= await TicketNFT.functions.getTicketsOfCustomer(wallet.address)
+                                const [TicketsIds]= Object.values(await TicketNFT.functions.getTicketsOfCustomer(wallet.address))
+                                // console.log(TicketsId[0])
+                                let res = []
+                                for(let i = 0;i < TicketsIds.length; i++){
+                                    // [purchasePrice, sellingPrice, forSale, canTransfer, ticketStatus]
+                                    let TicketsId = TicketsIds[i]
+                                    let val = Object.values(await TicketNFT.functions.getTicketDetails(TicketsId))
+                                    let purchasePrice = val[0]
+                                    let sellingPrice = val[1]
+                                    let forSale = val[2]
+                                    let canTransfer = val[3]
+                                    let ticketStatus = val[4]
+                                    // console.log(val[0])
+                                    // console.log(TicketsDetail)
+                                    // [purchasePrice, sellingPrice, forSale, canTransfer, ticketStatus] = Object.values(TicketsDetail)
+                                    // console.log(purchasePrice)
+                                    // console.log(sellingPrice)
+                                    // console.log(forSale)
+                                    // console.log(canTransfer)
+                                    // console.log(ticketStatus)
+                                    let tmp = (
+                                        <tr>
+                                            <td class="center">{TicketName}</td>
+                                            <td class="center">{TicketsId.toString()}</td>
+                                            <td class="center">{ticketStatus.toString()}</td>
+                                            <td class="center">{TicketPrice.toString()}</td>
+                                            <td>
+                                            <input type="text" className="form-control" id="ticket_name" onChange={handleInput}
+                                                   ></input><br/><br/>
+                                            </td>
+                                                <td><button type="button"  className="btn btn-primary" onClick={handleClick.bind(this,TicketsId.toString())}>Submit</button></td>
+                                        </tr>
+                                    )
+                                    res.push(tmp)
+                                }
+                                // return (
+                                //     <tr>
+                                //
+                                //     </tr>
+                                // )
+                                return res
 
-                                const TicketsDetail = TicketNFT.functions.getTicketDetails(TicketsId)
-                                [purchasePrice, sellingPrice, forSale, canTransfer, ticketStatus] = Object.values(TicketsDetail)
-                                console.log(TicketsId)
-                                let tmp = (
-                                    <tr>
-                                        <td class="center">{TicketName}</td>
-                                        <td class="center">{TicketsId.toString()}</td>
-                                        <td class="center">{ticketStatus.toString()}</td>
-                                        <td>
-                                        <input type="text" className="form-control" id="ticket_name" onChange={handleInput}
-                                               ></input><br/><br/>
-                                        </td>
-                                            <td><button type="button"  className="btn btn-primary" onClick={handleClick.bind(this,TicketsId)}>Submit</button></td>
-                                    </tr>
-                                )
+                                // console.log(TicketsId)
+
 
                             }
                             else{
@@ -133,7 +170,7 @@ class Purchase extends Component {
         return (
             <main className={styles.main}>
                 <header className={styles.header}>
-                    <h1>Buy Tickets</h1>
+                    <h1>My Tickets</h1>
                 </header>
 
                 <table className="table">
@@ -146,6 +183,7 @@ class Purchase extends Component {
                          {/*<th scope="col">Type</th>*/}
 
                          <th scope="col">Status</th>
+                        <th scope="col">Old Price</th>
                         <th scope="col">New Price</th>
                          <th scope="col">Sell</th>
                     </tr>

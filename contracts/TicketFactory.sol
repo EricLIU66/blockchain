@@ -17,6 +17,7 @@ contract TicketsFactory is Ownable {
     }
     address[] private activeFests;
     mapping(address => Festival) private activeFestsMapping;
+    mapping(address => Festival) private activeCustomer; // make change
 
     event Created(address ntfAddress, address marketplaceAddress);
     function createNewFest(
@@ -25,7 +26,7 @@ contract TicketsFactory is Ownable {
         string memory festSymbol,
         uint256 ticketPrice,
         uint256 totalSupply
-    ) public onlyOwner returns (address) {
+    ) public returns (address) {
         TicketNFT newFest =
             new TicketNFT(
                 festName,

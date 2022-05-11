@@ -22,7 +22,7 @@ let token = new ethers.Contract( token_address , token_abi , wallet );
 
 let TicketFactory_ct = require('../../../artifacts/contracts/TicketFactory.sol/TicketsFactory.json');
 let TicketFactory_abi = TicketFactory_ct.abi;
-let TicketFactory = new ethers.Contract( factory_address , TicketFactory_abi , wallet );
+let TicketFactory = new ethers.Contract(factory_address , TicketFactory_abi , wallet);
 
 class Release extends Component {
 
@@ -54,6 +54,8 @@ class Release extends Component {
                             let ticketsForLott = await TicketNFT.functions.getTicketsForLott()
                             let _organiser = await TicketNFT.functions.getOrganiser()
                             let left = totalSupply - ticketsForBulk[0].length - ticketsForLott[0].length
+                            // let left = totalSupply - ticketsForBulk.length - ticketsForLott.length 
+
                             let num = 0
                             const handleClick = async (myNFT, myMarket, organiser)=>{
 
@@ -62,7 +64,8 @@ class Release extends Component {
                                     let TicketNFT_ct = require('../../../artifacts/contracts/TicketNFT.sol/TicketNFT.json');
                                     let TicketNFT_abi = TicketNFT_ct.abi;
                                     let TicketNFT = new ethers.Contract(myNFT , TicketNFT_abi , wallet );
-                                    await TicketNFT.functions.bulkLotteryTickets(number, myMarket);
+                                    // await TicketNFT.functions.bulkLotteryTickets(number, myMarket); // make change
+                                    await TicketNFT.functions.bulkMintTickets(number, myMarket); // xian dao xian de
                                     Router.reload(window.location.pathname)
                                 }
                                 catch (exception){

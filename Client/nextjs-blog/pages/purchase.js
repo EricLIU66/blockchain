@@ -22,6 +22,7 @@ import Router from "next/router";
 const ethers = require('ethers');
 const config = require('../config.json');
 let privateKey = config['private_key']
+let privateKey2 = config['private_key2']
 let network = config['network']
 let address = config['address']
 
@@ -30,14 +31,25 @@ let factory_address = config['factory_address']
 
 let provider = ethers.getDefaultProvider(network);
 let wallet = new ethers.Wallet(privateKey , provider);
+let wallet2 = new ethers.Wallet(privateKey2 , provider); // make change
 
 let token_ct = require('../../../artifacts/contracts/GogoToken.sol/GogoToken.json');
 let token_abi = token_ct.abi;
-let token = new ethers.Contract( token_address , token_abi , wallet );
 
+
+let token = new ethers.Contract(token_address , token_abi); // make change
+// await token.functions.transfer(wallet2.address, 1000) // make change
+
+
+// console.log(token.balanceOf(wallet2.address).toString())
+// let balancePromise = token.balanceOf(wallet2.address);
+
+// balancePromise.then((balance) => {
+//     console.log(ethers.utils.formatEther(balance));
+// });
 let TicketFactory_ct = require('../../../artifacts/contracts/TicketFactory.sol/TicketsFactory.json');
 let TicketFactory_abi = TicketFactory_ct.abi;
-let TicketFactory = new ethers.Contract( factory_address , TicketFactory_abi , wallet );
+let TicketFactory = new ethers.Contract(factory_address , TicketFactory_abi, wallet2);
 
 
 
@@ -62,8 +74,8 @@ class Purchase extends Component {
                     return await Promise.all(test.map(
                        async ticket => {
                            // console.log(fest)
-                           const festDetails = await TicketFactory.functions.getFestDetails(ticket)
-                           const [TicketName, TicketSymbol, TicketPrice, totalSupply, MarketPlace] = Object.values(festDetails);
+                          const festDetails = await TicketFactory.functions.getFestDetails(ticket)
+                          const [TicketName, TicketSymbol, TicketPrice, totalSupply, MarketPlace] = Object.values(festDetails);
 
                            let TicketNFT_ct = require('../../../artifacts/contracts/TicketNFT.sol/TicketNFT.json');
                            let TicketNFT_abi = TicketNFT_ct.abi;
@@ -72,7 +84,8 @@ class Purchase extends Component {
                            let ticketsForBulk = await TicketNFT.functions.getTicketsForBulk()
                            let ticketsForLott = await TicketNFT.functions.getTicketsForLott()
                            let lott_number = ticketsForLott[0].length
-                           let bulk_number = totalSupply - lott_number
+                           // let bulk_number = totalSupply - lott_number // make change
+                           let bulk_number = ticketsForBulk[0].length
 
 
 
@@ -85,23 +98,31 @@ class Purchase extends Component {
                                let TicketPrice = e.target.getAttribute('TicketPrice')
                                let Type = e.target.getAttribute('TicketType')
                                let Number = e.target.getAttribute('Number')
+                               console.log(MarketPlace)
+                               console.log(TicketName)
+                               console.log(TicketPrice)
+                               console.log(Type)
+                               console.log(Number)
                                if(Type == "Bulk"){
                                    const config = require('../config.json');
                                    let privateKey = config['private_key']
                                    let network = config['network']
                                    let token_address = config['token_address']
                                    let provider = ethers.getDefaultProvider(network);
-                                   let wallet = new ethers.Wallet(privateKey , provider);
+                                   let wallet = new ethers.Wallet(privateKey2, provider);
                                    let token_ct = require('../../../artifacts/contracts/GogoToken.sol/GogoToken.json');
                                    let token_abi = token_ct.abi;
-                                   let token = new ethers.Contract( token_address , token_abi , wallet );
+                                   // let token = new ethers.Contract( token_address , token_abi , wallet ); // make change
+                                   let token = new ethers.Contract(token_address, token_abi, wallet2); // make change
                                    // 买票之前，用户得授权买票的市场
+                                   // await token.functions.increaseAllowance(MarketPlace, TicketPrice); // make change
                                    await token.functions.increaseAllowance(MarketPlace, TicketPrice);
+                                   // console.log(token.balanceOf(wallet2))
                                    // 买票，去票对应的市场
                                    let TicketMarket_ct = require('../../../artifacts/contracts/TicketMarket.sol/TicketMarket.json');
                                    let TicketMarket_abi = TicketMarket_ct.abi;
-                                   let TicketsMartket = new ethers.Contract( MarketPlace, TicketMarket_abi , wallet );
-                                   await TicketsMartket.connect(wallet.address).functions.purchaseTicket();
+                                   let TicketsMartket = new ethers.Contract( MarketPlace, TicketMarket_abi);
+                                   await TicketsMartket.connect(wallet2).functions.purchaseTicket();
                                    Router.reload(window.location.pathname)
                                }
                                else{
@@ -136,7 +157,7 @@ class Purchase extends Component {
                                    // </tr>
                                )]
 
-                           return tmp
+                          return tmp
                        }
 
                    ))

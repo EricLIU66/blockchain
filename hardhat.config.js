@@ -35,6 +35,10 @@ module.exports = {
     etherdata: {
       url: `https://rpc.debugchain.net/`,
       accounts: ["e48d491f3836013b8ae0bd755f96c4fa5a9833f8194fcef681651a33ddda2149"],
-    }
+    },
+    // ganache: {
+    //   url: `http://127.0.0.1:9545`,
+    //   accounts: [`0x${PRIVATE_KEY1}`,`0x${PRIVATE_KEY2}`,`0x${PRIVATE_KEY3}`,`0x${PRIVATE_KEY4}`]
+    // },
   }
-};
+}
