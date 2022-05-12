@@ -4,7 +4,7 @@ import React, { useState,useEffect , Component} from "react";
 import Router from "next/router";
 const ethers = require('ethers');
 const config = require('../config.json');
-let privateKey = config['private_key2']
+let privateKey = config['private_key']
 let network = config['network']
 let address = config['address']
 
@@ -94,14 +94,6 @@ class Purchase extends Component {
                                     let forSale = val[2]
                                     let canTransfer = val[3]
                                     let ticketStatus = val[4]
-                                    // console.log(val[0])
-                                    // console.log(TicketsDetail)
-                                    // [purchasePrice, sellingPrice, forSale, canTransfer, ticketStatus] = Object.values(TicketsDetail)
-                                    // console.log(purchasePrice)
-                                    // console.log(sellingPrice)
-                                    // console.log(forSale)
-                                    // console.log(canTransfer)
-                                    // console.log(ticketStatus)
                                     let tmp = (
                                         <tr>
                                             <td class="center">{TicketName}</td>
@@ -117,16 +109,7 @@ class Purchase extends Component {
                                     )
                                     res.push(tmp)
                                 }
-                                // return (
-                                //     <tr>
-                                //
-                                //     </tr>
-                                // )
                                 return res
-
-                                // console.log(TicketsId)
-
-
                             }
                             else{
                                 return (
@@ -177,11 +160,8 @@ class Purchase extends Component {
 
                     <thead>
                     <tr>
-                        {/*<th scope="col">#</th>*/}
                         <th scope="col">Name</th>
                          <th scope="col">ID</th>
-                         {/*<th scope="col">Type</th>*/}
-
                          <th scope="col">Status</th>
                         <th scope="col">Old Price</th>
                         <th scope="col">New Price</th>

@@ -45,10 +45,6 @@ class Purchase extends Component {
 
                             async function handleClick(e){
                                 e.preventDefault()
-                                // let TicketName = e.target.getAttribute('TicketName')
-                                // let TicketSymbol = e.target.getAttribute('TicketSymbol')
-                                // let lottNumber = e.target.getAttribute('lottNumber')
-
                                 let TicketMarket_ct = require('../../../artifacts/contracts/TicketMarket.sol/TicketMarket.json');
                                 let TicketMarket_abi = TicketMarket_ct.abi;
                                 let TicketsMartket = new ethers.Contract( MarketPlace, TicketMarket_abi, wallet);

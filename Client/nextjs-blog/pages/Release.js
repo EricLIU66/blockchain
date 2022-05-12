@@ -55,7 +55,7 @@ class Release extends Component {
                             let ticketsForLott = await TicketNFT.functions.getTicketsForLott()
                             let _organiser = await TicketNFT.functions.getOrganiser()
                             let left = totalSupply - ticketsForBulk[0].length - ticketsForLott[0].length
-                            // let left = totalSupply
+                            // let left = totalSupply - ticketsForBulk.length - ticketsForLott.length 
 
                             let num = 0
                             const handleClick = async (myNFT, myMarket, organiser)=>{
@@ -97,7 +97,7 @@ class Release extends Component {
                                         <th scope="row" id = "organiser">{_organiser}</th>
                                         <td>{TicketName}</td>
                                         <td>{TicketSymbol}</td>
-                                        <td>{left.toString()}</td>
+                                        <td>{left}</td>
                                         <td>
                                             <input type="text"  id="number" name = "number" onChange={handleInput}
                                             ></input><br/><br/>

@@ -7,7 +7,7 @@ import Router from "next/router";
 
 const ethers = require('ethers');
 const config = require('../config.json');
-let privateKey3 = config['private_key3']
+let privateKey3 = config['private_key']
 let network = config['network']
 let address = config['address']
 
@@ -56,7 +56,6 @@ class Purchase extends Component {
                             // console.log(fest)
                             async function handleClick(e){
                                 e.preventDefault()
-
                                 let MarketPlace = e.target.getAttribute('MarketPlace')
                                 let TicketName = e.target.getAttribute('TicketName')
                                 let TicketSymbol = e.target.getAttribute('TicketSymbol')
@@ -75,16 +74,6 @@ class Purchase extends Component {
                             let TicketNFT_abi = TicketNFT_ct.abi;
                             let TicketNFT = new ethers.Contract( ticket , TicketNFT_abi , wallet );
                             let ticketsForSale = await TicketNFT.functions.getTicketsForSale()
-                            // uint256 purchasePrice,
-                            //     uint256 sellingPrice,
-                            //     bool forSale,
-                            //     bool canTransfer,
-                            //     string memory status
-
-                           
-                            
-                            // console.log(ticketsForSale)
-                            // console.log(ticketsForSale.length)
                             if(ticketsForSale[0].length != 0){
                                 let res = []
                                 for(let i = 0; i < ticketsForSale[0].length; i++){
