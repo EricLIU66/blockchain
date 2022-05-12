@@ -57,7 +57,6 @@ contract TicketMarket {
         );
         uint winnerNo = _festival.getLotteryNo();
         uint playerNo = players.length;
-
         if (winnerNo > playerNo) {
             winnerNo = playerNo;
         }

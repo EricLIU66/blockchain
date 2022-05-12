@@ -379,6 +379,16 @@ contract TicketNFT is Context, AccessControl, ERC721 {
     {
         return ticketsForLott.length - _lottTicketIndex.current();
     }
+    function transfromLottToBulk()
+        public
+    {
+        for(uint256 i=0; i<ticketsForLott.length; i++){
+            ticketsForBulk.push(ticketsForLott[i]);
+            ticketsForLott[i] = ticketsForLott[ticketsForLott.length - 1];
+            ticketsForLott.pop();
+        }
+    }
+
     // Get all tickets owned by a customer
     function getTicketsOfCustomer(address customer)
         public
